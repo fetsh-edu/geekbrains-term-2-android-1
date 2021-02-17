@@ -21,13 +21,6 @@
         android:hint="Fill some text"
         android:autofillHints="Some text" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#FF1100"
-        android:fontFamily="monospace"
-        android:text="Press" />
-
     <Switch
         android:layout_height="wrap_content"
         android:layout_width="wrap_content" />
@@ -39,6 +32,14 @@
     <ToggleButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/activity_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF1100"
+        android:fontFamily="monospace"
+        android:text="Second Activity" />
 
 
 </LinearLayout>

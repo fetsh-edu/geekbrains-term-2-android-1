@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/displayBackground">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineH"
@@ -19,6 +20,13 @@
         android:layout_height="wrap_content"
         app:layout_constraintGuide_percent="0.75"
         android:orientation="vertical"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        app:layout_constraintBottom_toTopOf="@id/guidelineH"
+        android:background="@drawable/shadow"
         />
 
     <TextView

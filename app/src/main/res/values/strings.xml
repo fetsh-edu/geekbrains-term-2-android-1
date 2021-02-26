@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Calculator</string>
+    <string name="operator_equal">=</string>
+    <string name="operator_plus">+</string>
+    <string name="operator_minus">−</string>
+    <string name="operator_multiply">×</string>
+    <string name="operator_divide">÷</string>
+    <string name="keyboard_del">⌫</string>
+    <string name="keyboard_num_0">0</string>
+    <string name="keyboard_dot">.</string>
+    <string name="keyboard_num_3">3</string>
+    <string name="keyboard_num_2">2</string>
+    <string name="keyboard_num_1">1</string>
+    <string name="keyboard_num_6">6</string>
+    <string name="keyboard_num_5">5</string>
+    <string name="keyboard_num_4">4</string>
+    <string name="keyboard_num_9">9</string>
+    <string name="keyboard_num_8">8</string>
+    <string name="keyboard_num_7">7</string>
 </resources>

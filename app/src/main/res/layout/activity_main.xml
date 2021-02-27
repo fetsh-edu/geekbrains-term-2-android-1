@@ -36,10 +36,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/result"
         app:layout_constraintRight_toLeftOf="@id/right_margin_guideline"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="2+2"
-        android:textSize="36sp"
+        tools:text="5-2"
         android:gravity="right"
+        style="@style/formula"
         />
     <TextView
         android:id="@+id/result"
@@ -48,11 +49,11 @@
         app:layout_constraintTop_toBottomOf="@id/formula"
         app:layout_constraintBottom_toTopOf="@id/display_guideline"
         app:layout_constraintRight_toLeftOf="@id/right_margin_guideline"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="4"
-        android:textSize="30sp"
-        android:textColor="#000"
         android:gravity="right"
+        style="@style/result"
         />
     <Button
         android:id="@+id/keyboard_num7"

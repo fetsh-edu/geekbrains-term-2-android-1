@@ -73,7 +73,10 @@ public class RPNExpression {
                 stack.push(Double.valueOf(cur));
             }
         }
-        return stack.pop();
+        Double result = stack.pop();
+        if (Double.isNaN(result)) errors.add("Result is not a number");
+        if (Double.isInfinite(result)) errors.add("Result is infinite");
+        return result;
     }
 
     public boolean hasErrors() {

@@ -1,42 +1,68 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 public class Calculator {
+
+    public enum State {
+        Input, Result
+    }
 
     private final CalculatorActivity activity;
     private final Expression expression = new Expression();
     private final RPNExpression rpnExpression = new RPNExpression();
+
+    private State state = State.Input;
     private double result = 0D;
 
     public Calculator(CalculatorActivity activity) {
         this.activity = activity;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public void restore(List<String> stringArrayList, String state) {
+        expression.clear();
+        expression.addAll(stringArrayList);
+        setState(State.valueOf(state));
+        setFormula();
+        setComputedResult();
+    }
+
     public void handleDot() {
         expression.addDot();
+        setState(State.Input);
         setFormula();
         setComputedResult();
     }
 
     private void addDigit(String number) {
         expression.addDigit(number);
+        setState(State.Input);
         setFormula();
         setComputedResult();
     }
 
     public void handleOperator(Operator operator) {
         expression.addOperator(operator);
+        setState(State.Input);
         setFormula();
         setComputedResult();
     }
 
     public void handleDelete() {
         expression.dropLast();
+        setState(State.Input);
         setFormula();
         setComputedResult();
     }
 
     public boolean handleClear() {
         expression.clear();
+        setState(State.Input);
         setFormula();
         setComputedResult();
         return true;
@@ -44,18 +70,18 @@ public class Calculator {
 
     public void handleEquals() {
         if (expression.isEmpty()) return;
+
         rpnExpression.setInfixExpression(expression);
         if (!rpnExpression.isReady()) return;
 
-        Double tempResult = rpnExpression.evaluate();
-        if (rpnExpression.hasErrors() || !Double.isFinite(tempResult)) {
-            setResult(rpnExpression.getErrors().findFirst().orElse("Error"));
-        } else{
+        result = rpnExpression.evaluate();
+        if (!rpnExpression.hasErrors()) {
             expression.clear();
-            expression.addDigit(trimZeroes(Double.toString(tempResult)));
-            setFormula();
-            setResult("");
+            expression.addDigit(trimZeroes(Double.toString(result)));
         }
+        setState(State.Result);
+        setFormula();
+        setResult(getFormattedResult());
     }
 
     public void handleNumber(int number) {
@@ -105,6 +131,14 @@ public class Calculator {
         setResult(getFormattedResult());
     }
 
+    public Stream<String> getExpression() {
+        return expression.getExpression();
+    }
+
+    private void setState(State state) {
+        this.state = state;
+    }
+
     private void computeResult() {
         rpnExpression.setInfixExpression(expression);
         if (rpnExpression.isValid()) result = rpnExpression.evaluate();
@@ -113,10 +147,21 @@ public class Calculator {
     private String getFormattedResult() {
         if (expression.isEmpty()) return "";
         if (!rpnExpression.isReady()) return "";
-        if (rpnExpression.hasErrors()) return "";
-
-        return trimZeroes(Double.toString(result));
+        if (state.equals(State.Input)) {
+            if (rpnExpression.hasErrors()) {
+                return "";
+            } else {
+                return trimZeroes(Double.toString(result));
+            }
+        } else {
+            if (rpnExpression.hasErrors()) {
+                return rpnExpression.getErrors().findFirst().orElse("Error");
+            } else {
+                return "";
+            }
+        }
     }
+
     private String trimZeroes(String str) {
         if (!str.endsWith(".0")) return str;
 

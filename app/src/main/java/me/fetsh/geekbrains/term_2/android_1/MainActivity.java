@@ -1,14 +1,20 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements CalculatorActivity {
+
+    private final static String savedExpressionKey = "expressionList";
+    private final static String savedCalcState = "calcState";
 
     private Calculator calc;
     private TextView mFormulaTextView;
@@ -45,6 +51,27 @@ public class MainActivity extends AppCompatActivity implements CalculatorActivit
         delete_button.setOnLongClickListener(v -> calc.handleClear());
 
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle instanceState) {
+        super.onSaveInstanceState(instanceState);
+        instanceState.putStringArrayList(
+                savedExpressionKey,
+                calc.getExpression().collect(Collectors.toCollection(ArrayList::new))
+        );
+        instanceState.putString(savedCalcState, calc.getState().name());
+    }
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle instanceState) {
+        super.onRestoreInstanceState(instanceState);
+        calc = new Calculator(this);
+        calc.restore(
+                instanceState.getStringArrayList(savedExpressionKey),
+                instanceState.getString(savedCalcState)
+        );
+    }
+
+
 
     @Override
     public void showFormula(String text) {

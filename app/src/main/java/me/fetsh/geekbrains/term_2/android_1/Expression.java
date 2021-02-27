@@ -3,6 +3,7 @@ package me.fetsh.geekbrains.term_2.android_1;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +20,10 @@ public class Expression {
         } catch(NumberFormatException e){
             return false;
         }
+    }
+
+    public boolean addAll(Collection<? extends String> collection) {
+        return expression.addAll(collection);
     }
 
     public void addDot() {

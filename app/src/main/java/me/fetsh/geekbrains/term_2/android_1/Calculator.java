@@ -14,7 +14,6 @@ public class Calculator {
     private final RPNExpression rpnExpression = new RPNExpression();
 
     private State state = State.Input;
-    private double result = 0D;
 
     public Calculator(CalculatorActivity activity) {
         this.activity = activity;

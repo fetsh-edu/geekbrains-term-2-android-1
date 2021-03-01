@@ -1,9 +1,18 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 public class Calculator {
+
+    public static DecimalFormat defaultFormatter;
+    static {
+        defaultFormatter = new DecimalFormat("###,###.#", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+        defaultFormatter.setMaximumFractionDigits(340);
+    }
 
     public enum State {
         Input, Result
@@ -67,7 +76,7 @@ public class Calculator {
 
         if (result instanceof Success) {
             infixExpression.clear();
-            infixExpression.addDigit(((Success) result).getFormattedResult());
+            infixExpression.add(Token.of(((Success) result).getFormattedResult()));
         }
         setState(State.Result);
         updateDisplay(result);

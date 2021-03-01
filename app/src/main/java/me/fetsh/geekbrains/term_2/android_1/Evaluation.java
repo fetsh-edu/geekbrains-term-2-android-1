@@ -1,6 +1,9 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 public interface Evaluation {
@@ -30,10 +33,7 @@ class Success implements Evaluation {
         return result;
     }
     public String getFormattedResult() {
-        String str = Double.toString(getResult());
-        if (!str.endsWith(".0")) return str;
-
-        return str.substring(0, str.length() - 2);
+        return Calculator.defaultFormatter.format(getResult());
     }
 }
 class Failure implements Evaluation {

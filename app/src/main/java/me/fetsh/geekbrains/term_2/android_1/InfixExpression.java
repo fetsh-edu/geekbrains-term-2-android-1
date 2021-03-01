@@ -66,6 +66,10 @@ public class InfixExpression {
     public void dropLastChar() {
         lastToken().dropLastChar().ifPresentOrElse(this::replaceLast, this::dropLast);
     }
+    public void add(Token token) {
+        if (token.isEmpty()) return;
+        expression.add(token);
+    }
 
     private void dropTrailingWhile(Predicate<Token> predicate) {
         while (expression.size() > 0 && predicate.test(expression.get(expression.size() - 1))) {
@@ -81,11 +85,6 @@ public class InfixExpression {
         } else {
             expression.set(expression.size() - 1, token);
         }
-    }
-
-    private void add(Token token) {
-        if (token.isEmpty()) return;
-        expression.add(token);
     }
 
     private void dropLast() {

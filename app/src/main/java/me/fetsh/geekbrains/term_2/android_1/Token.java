@@ -2,6 +2,9 @@ package me.fetsh.geekbrains.term_2.android_1;
 
 import androidx.annotation.NonNull;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -14,16 +17,17 @@ public interface Token {
     }
 
     static Token of(String value) {
-       try{
+        value = value.replace(",", "");
+        try{
             Double.valueOf(value);
             return NumberToken.of(value);
-       } catch(NumberFormatException e){
+        } catch(NumberFormatException e){
            if (value.isEmpty()) {
                return emptyToken;
            } else {
                return OperatorToken.of(value);
            }
-       }
+        }
     }
 
     Token appendDigit(String digit, Token secondLastToken);
@@ -195,7 +199,6 @@ public interface Token {
 
     }
 
-
     abstract class NumberToken extends ValueToken implements Token {
 
         public NumberToken(String value) {
@@ -220,6 +223,18 @@ public interface Token {
         @Override
         public Double getDouble() {
             return Double.valueOf(getValue());
+        }
+
+        @Override
+        public String toUserString() {
+            String[] numbers = getValue().split("\\.");
+            String result = Calculator.defaultFormatter.format(Double.valueOf(numbers[0]));
+            if (numbers.length == 2) {
+                result += ("." + numbers[1]);
+            } else if (getValue().endsWith(".")) {
+                result += ".";
+            }
+            return result;
         }
     }
 

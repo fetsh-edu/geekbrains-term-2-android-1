@@ -10,7 +10,7 @@ public class Calculator {
     }
 
     private final CalculatorActivity activity;
-    private final Expression expression = new Expression();
+    private final InfixExpression infixExpression = new InfixExpression();
     private final RPNExpression rpnExpression = new RPNExpression();
 
     private State state = State.Input;
@@ -25,63 +25,53 @@ public class Calculator {
     }
 
     public void restore(List<String> stringArrayList, String state) {
-        expression.clear();
-        expression.addAll(stringArrayList);
+        infixExpression.clear();
+        infixExpression.addAll(stringArrayList);
         setState(State.valueOf(state));
-        setFormula();
-        setComputedResult();
+        updateDisplay();
     }
 
     public void handleDot() {
-        expression.addDot();
+        infixExpression.addDot();
         setState(State.Input);
-        setFormula();
-        setComputedResult();
+        updateDisplay();
     }
 
     private void addDigit(String number) {
-        expression.addDigit(number);
+        infixExpression.addDigit(number);
         setState(State.Input);
-        setFormula();
-        setComputedResult();
+        updateDisplay();
     }
 
     public void handleOperator(Operator operator) {
-        expression.addOperator(operator);
+        infixExpression.addOperator(operator);
         setState(State.Input);
-        setFormula();
-        setComputedResult();
+        updateDisplay();
     }
 
     public void handleDelete() {
-        expression.dropLast();
+        infixExpression.dropLastChar();
         setState(State.Input);
-        setFormula();
-        setComputedResult();
+        updateDisplay();
     }
 
     public boolean handleClear() {
-        expression.clear();
+        infixExpression.clear();
         setState(State.Input);
-        setFormula();
-        setComputedResult();
+        updateDisplay();
         return true;
     }
 
     public void handleEquals() {
-        if (expression.isEmpty()) return;
+        Evaluation result = rpnExpression.evaluate(infixExpression);
+        if (result instanceof NotReady) return;
 
-        rpnExpression.setInfixExpression(expression);
-        if (!rpnExpression.isReady()) return;
-
-        result = rpnExpression.evaluate();
-        if (!rpnExpression.hasErrors()) {
-            expression.clear();
-            expression.addDigit(trimZeroes(Double.toString(result)));
+        if (result instanceof Success) {
+            infixExpression.clear();
+            infixExpression.addDigit(((Success) result).getFormattedResult());
         }
         setState(State.Result);
-        setFormula();
-        setResult(getFormattedResult());
+        updateDisplay(result);
     }
 
     public void handleNumber(int number) {
@@ -119,53 +109,46 @@ public class Calculator {
         }
     }
 
-    public void setFormula() {
-        activity.showFormula(expression.getFormula());
-    }
-    public void setResult(String string) {
-        activity.showResult(string);
-    }
-
-    public void setComputedResult() {
-        computeResult();
-        setResult(getFormattedResult());
-    }
-
     public Stream<String> getExpression() {
-        return expression.getExpression();
+        return infixExpression.getStringExpression();
     }
 
     private void setState(State state) {
         this.state = state;
     }
 
-    private void computeResult() {
-        rpnExpression.setInfixExpression(expression);
-        if (rpnExpression.isValid()) result = rpnExpression.evaluate();
-    }
-
-    private String getFormattedResult() {
-        if (expression.isEmpty()) return "";
-        if (!rpnExpression.isReady()) return "";
+    private String getResultString(Evaluation result) {
         if (state.equals(State.Input)) {
-            if (rpnExpression.hasErrors()) {
-                return "";
-            } else {
-                return trimZeroes(Double.toString(result));
-            }
+            return getInputStateResultString(result);
+        } else if (state.equals(State.Result)) {
+            return getResultStateResultString(result);
         } else {
-            if (rpnExpression.hasErrors()) {
-                return rpnExpression.getErrors().findFirst().orElse("Error");
-            } else {
-                return "";
-            }
+            return "Illegal state";
         }
     }
 
-    private String trimZeroes(String str) {
-        if (!str.endsWith(".0")) return str;
-
-        return str.substring(0, str.length() - 2);
+    private String getResultStateResultString(Evaluation result) {
+        if (result instanceof Failure) {
+            return ((Failure) result).getErrors().findFirst().orElse("Error");
+        } else {
+            return "";
+        }
     }
 
+    private String getInputStateResultString(Evaluation result) {
+        if (result instanceof Success) {
+            return ((Success) result).getFormattedResult();
+        } else {
+            return "";
+        }
+    }
+
+    public void updateDisplay() {
+        updateDisplay(rpnExpression.evaluate(infixExpression));
+    }
+
+    private void updateDisplay(Evaluation result) {
+        activity.showFormula(infixExpression.getFormula());
+        activity.showResult(getResultString(result));
+    }
 }

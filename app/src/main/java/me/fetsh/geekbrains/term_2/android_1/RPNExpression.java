@@ -6,77 +6,46 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RPNExpression {
 
     private final List<String> errors = new ArrayList<>();
-    private List<String> sanitizedInfixList;
-    private final Queue<String> expression = new LinkedList<>();
     private final Map<String, Integer> precedence = Map.of(
             "/", 4,
             "*", 4,
             "+", 2,
             "-", 2);
-    private final Map<String, BiFunction<Double, Double, Double>> operations = Map.of(
-            "/", (a, b) -> a / b,
-            "*", (a, b) -> a * b,
-            "+", (a, b) -> a + b,
-            "-", (a, b) -> a - b
-    );
 
-    public void setInfixExpression(Expression infixExpression) {
-        sanitizedInfixList = sanitizeExpression(infixExpression);
+    public Evaluation evaluate(InfixExpression infixExpression) {
         errors.clear();
-    }
+        if(infixExpression.isEmpty()) return Evaluation.notReady;
 
-    public boolean isValid() {
-        return !sanitizedInfixList.isEmpty();
-    }
+        List<Token> sanitizedInfixList = buildSanitizedInfixList(infixExpression);
+        if(notReady(sanitizedInfixList)) return Evaluation.notReady;
 
-    public boolean isReady() {
-        return sanitizedInfixList.size() > 2 && sanitizedInfixList.stream().anyMatch(Operator::isOperator);
-    }
-
-    private void build() {
-        expression.clear();
-        Stack<String> stack = new Stack<>();
-        for (String token : sanitizedInfixList) {
-            if (precedence.containsKey(token)) {
-                while (!stack.empty() && precedence.get(token) <= precedence.get(stack.peek())) {
-                    expression.add(stack.pop());
-                }
-                stack.push(token);
-            } else {
-                expression.add(token);
-            }
-        }
-        while (!stack.isEmpty()) {
-            expression.add(stack.pop());
-        }
-    }
-
-    public Double evaluate() {
-        build();
+        Queue<Token> rpnQueue = buildRPNQueue(sanitizedInfixList);
         Stack<Double> stack =  new Stack<>();
 
-        for (String cur: expression) {
-            if(operations.containsKey(cur)) {
+        for (Token token: rpnQueue) {
+            if(token.isOperator()) {
                 Double right = stack.pop();
                 Double left = stack.pop();
-                if (cur.equals("/") && right.equals(0D)) errors.add("Division by zero");
-                stack.push(operations.get(cur).apply(left, right));
+                if (token.isDivisionOperator() && right.equals(0D)) errors.add("Division by zero");
+                stack.push(token.getOperation().apply(left, right));
 
             } else {
-                stack.push(Double.valueOf(cur));
+                stack.push(token.getDouble());
             }
         }
         Double result = stack.pop();
         if (Double.isNaN(result)) errors.add("Result is not a number");
         if (Double.isInfinite(result)) errors.add("Result is infinite");
-        return result;
+
+        if (!errors.isEmpty()) return Evaluation.failure(errors);
+
+        return Evaluation.success(result);
     }
 
     public boolean hasErrors() {
@@ -87,12 +56,34 @@ public class RPNExpression {
         return errors.stream();
     }
 
-    private List<String> sanitizeExpression(Expression expression) {
-        List<String> sanitized = expression.getExpression().collect(Collectors.toList());
-        while (!sanitized.isEmpty() && !Expression.isNumber(sanitized.get(sanitized.size() - 1))) {
-            sanitized.remove(sanitized.get(sanitized.size() - 1));
+    private Queue<Token> buildRPNQueue(List<Token> infixList) {
+        Queue<Token> result = new LinkedList<>();
+        Stack<Token> stack = new Stack<>();
+        for (Token token: infixList) {
+            if (precedence.containsKey(token.getValue())) {
+                while (!stack.empty() && precedence.get(token.getValue()) <= precedence.get(stack.peek().getValue())) {
+                    result.add(stack.pop());
+                }
+                stack.push(token);
+            } else {
+                result.add(token);
+            }
         }
-        return sanitized;
+        while (!stack.isEmpty()) {
+            result.add(stack.pop());
+        }
+        return result;
     }
 
+    private List<Token> buildSanitizedInfixList(InfixExpression infixExpression) {
+        List<Token> result = infixExpression.getExpression().collect(Collectors.toList());
+        while (!result.isEmpty() && !result.get(result.size() - 1).isNumber()) {
+            result.remove(result.get(result.size() - 1));
+        }
+        return result;
+    }
+
+    private boolean notReady(List<Token> infixList) {
+        return infixList.size() < 3;
+    }
 }

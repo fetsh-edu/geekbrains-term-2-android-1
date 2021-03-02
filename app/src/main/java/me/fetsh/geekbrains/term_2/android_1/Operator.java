@@ -1,7 +1,5 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
 public enum Operator {

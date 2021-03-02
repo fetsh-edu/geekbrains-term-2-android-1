@@ -1,18 +1,9 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Stream;
 
 public class Calculator {
-
-    public static DecimalFormat defaultFormatter;
-    static {
-        defaultFormatter = new DecimalFormat("###,###.#", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-        defaultFormatter.setMaximumFractionDigits(340);
-    }
 
     public enum State {
         Input, Result
@@ -72,11 +63,11 @@ public class Calculator {
 
     public void handleEquals() {
         Evaluation result = rpnExpression.evaluate(infixExpression);
-        if (result instanceof NotReady) return;
+        if (result instanceof Evaluation.NotReady) return;
 
-        if (result instanceof Success) {
+        if (result instanceof Evaluation.Success) {
             infixExpression.clear();
-            infixExpression.add(Token.of(((Success) result).getFormattedResult()));
+            infixExpression.add(Token.of(((Evaluation.Success) result).getFormattedResult()));
         }
         setState(State.Result);
         updateDisplay(result);
@@ -136,16 +127,16 @@ public class Calculator {
     }
 
     private String getResultStateResultString(Evaluation result) {
-        if (result instanceof Failure) {
-            return ((Failure) result).getErrors().findFirst().orElse("Error");
+        if (result instanceof Evaluation.Failure) {
+            return ((Evaluation.Failure) result).getErrors().findFirst().orElse("Error");
         } else {
             return "";
         }
     }
 
     private String getInputStateResultString(Evaluation result) {
-        if (result instanceof Success) {
-            return ((Success) result).getFormattedResult();
+        if (result instanceof Evaluation.Success) {
+            return ((Evaluation.Success) result).getFormattedResult();
         } else {
             return "";
         }

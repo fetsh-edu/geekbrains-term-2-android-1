@@ -2,9 +2,6 @@ package me.fetsh.geekbrains.term_2.android_1;
 
 import androidx.annotation.NonNull;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -67,6 +64,7 @@ public interface Token {
 
     default boolean isModificationOf(Token other) {
         if (other.isEmpty()) return false;
+        if (other instanceof EngineeringToken) return true;
         return getValue().startsWith(other.getValue());
     }
 
@@ -144,7 +142,7 @@ public interface Token {
 
         @Override
         public Token appendDigit(String digit, Token secondLastToken) {
-            return new IntegerToken(digit);
+            return NumberToken.of(digit);
         }
 
         @Override
@@ -182,9 +180,9 @@ public interface Token {
         @Override
         public Token appendDigit(String digit, Token prevToken) {
             if (prevToken instanceof NotMinusOperatorToken || prevToken instanceof EmptyToken) {
-                return new IntegerToken(getValue() + digit);
+                return NumberToken.of(getValue() + digit);
             } else {
-                return new IntegerToken(digit);
+                return NumberToken.of(digit);
             }
         }
 
@@ -206,7 +204,9 @@ public interface Token {
         }
 
         public static Token of(String value) {
-            if (value.contains(".")) {
+            if (value.contains("E")) {
+                return new EngineeringToken(value);
+            } else if (value.contains(".")) {
                 return new DoubleToken(value);
             } else if (value.equals("0")) {
                 return new ZeroIntegerToken();
@@ -227,17 +227,31 @@ public interface Token {
 
         @Override
         public String toUserString() {
-            String[] numbers = getValue().split("\\.");
-            String result = Calculator.defaultFormatter.format(Double.valueOf(numbers[0]));
-            if (numbers.length == 2) {
-                result += ("." + numbers[1]);
-            } else if (getValue().endsWith(".")) {
-                result += ".";
-            }
-            return result;
+            return Formatter.format(getValue());
         }
     }
+    class EngineeringToken extends NumberToken {
 
+        public EngineeringToken(String value) {
+            super(value);
+        }
+
+        @Override
+        public Token dropLastChar() {
+            return emptyToken;
+        }
+
+        @Override
+        public Token appendDigit(String digit, Token secondLastToken) {
+            return NumberToken.of(digit);
+        }
+
+        @Override
+        public Token appendDot() {
+            return emptyToken;
+        }
+
+    }
     class DoubleToken extends NumberToken {
 
         DoubleToken(String value) {
@@ -246,7 +260,7 @@ public interface Token {
 
         @Override
         public Token appendDigit(String digit, Token secondLastToken) {
-            return new DoubleToken(getValue() + digit);
+            return NumberToken.of(getValue() + digit);
         }
 
         @Override
@@ -263,7 +277,7 @@ public interface Token {
 
         @Override
         public Token appendDigit(String digit, Token secondLastToken) {
-            return new IntegerToken(getValue() + digit);
+            return NumberToken.of(getValue() + digit);
         }
 
         @Override
@@ -280,14 +294,14 @@ public interface Token {
 
         @Override
         public Token appendDigit(String digit, Token secondLastToken) {
-            return new IntegerToken(digit);
+            return NumberToken.of(digit);
         }
     }
 
     class EmptyToken implements Token {
         @Override
         public Token appendDigit(String digit, Token secondLastToken) {
-            return new IntegerToken(digit);
+            return NumberToken.of(digit);
         }
 
         @Override

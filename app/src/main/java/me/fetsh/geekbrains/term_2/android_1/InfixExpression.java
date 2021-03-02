@@ -11,15 +11,6 @@ public class InfixExpression {
 
     private final List<Token> expression  = new ArrayList<>();
 
-    static boolean isNumber(String token) {
-        try{
-            Double.valueOf(token);
-            return true;
-        } catch(NumberFormatException e){
-            return false;
-        }
-    }
-
     public Stream<Token> getExpression() {
         return expression.stream().filter(Token::isPresent);
     }

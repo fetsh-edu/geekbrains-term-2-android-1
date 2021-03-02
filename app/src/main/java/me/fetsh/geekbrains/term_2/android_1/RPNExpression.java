@@ -48,14 +48,6 @@ public class RPNExpression {
         return Evaluation.success(result);
     }
 
-    public boolean hasErrors() {
-        return !errors.isEmpty();
-    }
-
-    public Stream<String> getErrors() {
-        return errors.stream();
-    }
-
     private Queue<Token> buildRPNQueue(List<Token> infixList) {
         Queue<Token> result = new LinkedList<>();
         Stack<Token> stack = new Stack<>();

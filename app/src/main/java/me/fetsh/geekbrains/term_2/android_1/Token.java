@@ -65,6 +65,7 @@ public interface Token {
     default boolean isModificationOf(Token other) {
         if (other.isEmpty()) return false;
         if (other instanceof EngineeringToken) return true;
+        if (other instanceof ZeroIntegerToken) return true;
         return getValue().startsWith(other.getValue());
     }
 

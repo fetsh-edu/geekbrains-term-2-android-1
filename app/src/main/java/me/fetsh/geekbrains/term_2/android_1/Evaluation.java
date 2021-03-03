@@ -1,46 +1,50 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
-import java.util.List;
-import java.util.stream.Stream;
+import androidx.annotation.NonNull;
 
 public interface Evaluation {
+
     NotReady notReady = new NotReady();
 
-    static Evaluation failure(List<String> errors) {
-        return new Failure(errors);
+    static Evaluation failure(@NonNull String error) {
+        return new Failure(error);
     }
 
-    static Evaluation success(Double result) {
+    static Evaluation success(@NonNull Double result) {
         return new Success(result);
     }
-    class NotReady implements Evaluation {
 
+    class NotReady implements Evaluation {
+        private NotReady(){}
     }
+
     class Success implements Evaluation {
 
         private final Double result;
 
-        public Success(Double result) {
+        private Success(@NonNull Double result) {
             this.result = result;
         }
 
         public Double getResult() {
             return result;
         }
+
         public String getFormattedResult() {
             return Formatter.format(getResult());
         }
     }
+
     class Failure implements Evaluation {
 
-        private final List<String> errors;
+        private final String error;
 
-        public Failure(List<String> errors) {
-            this.errors = errors;
+        private Failure(@NonNull String error) {
+            this.error = error;
         }
 
-        public Stream<String> getErrors() {
-            return errors.stream();
+        public String getError() {
+            return error;
         }
     }
 }

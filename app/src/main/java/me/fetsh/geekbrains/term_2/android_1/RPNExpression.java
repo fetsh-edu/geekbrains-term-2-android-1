@@ -1,17 +1,14 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class RPNExpression {
 
-    private final List<String> errors = new ArrayList<>();
     private final Map<String, Integer> precedence = Map.of(
             "/", 4,
             "*", 4,
@@ -19,7 +16,6 @@ public class RPNExpression {
             "-", 2);
 
     public Evaluation evaluate(InfixExpression infixExpression) {
-        errors.clear();
         if(infixExpression.isEmpty()) return Evaluation.notReady;
 
         List<Token> sanitizedInfixList = buildSanitizedInfixList(infixExpression);
@@ -32,22 +28,23 @@ public class RPNExpression {
             if(token.isOperator()) {
                 Double right = stack.pop();
                 Double left = stack.pop();
-                if (token.isDivisionOperator() && right.equals(0D)) errors.add("Division by zero");
-                stack.push(token.getOperation().apply(left, right));
+//                if (token.isDivisionOperator() && right.equals(0D)) errors.add("Division by zero");
+                try {
+                    stack.push(token.getOperation().apply(left, right));
+                } catch (ArithmeticException e) {
+                    return Evaluation.failure(e.getMessage());
+                }
 
             } else {
                 stack.push(token.getDouble());
             }
         }
         Double result = stack.pop();
-        if (Double.isNaN(result)) errors.add("Result is not a number");
-        if (Double.isInfinite(result)) errors.add("Result is infinite");
-
-        if (!errors.isEmpty()) return Evaluation.failure(errors);
+        if (Double.isNaN(result)) return Evaluation.failure("Result is not a number");
+        if (Double.isInfinite(result)) return Evaluation.failure("Result is infinite");
 
         return Evaluation.success(result);
     }
-
     private Queue<Token> buildRPNQueue(List<Token> infixList) {
         Queue<Token> result = new LinkedList<>();
         Stack<Token> stack = new Stack<>();

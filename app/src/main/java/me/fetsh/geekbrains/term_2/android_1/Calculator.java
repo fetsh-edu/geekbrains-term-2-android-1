@@ -128,7 +128,7 @@ public class Calculator {
 
     private String getResultStateResultString(Evaluation result) {
         if (result instanceof Evaluation.Failure) {
-            return ((Evaluation.Failure) result).getErrors().findFirst().orElse("Error");
+            return ((Evaluation.Failure) result).getError();
         } else {
             return "";
         }

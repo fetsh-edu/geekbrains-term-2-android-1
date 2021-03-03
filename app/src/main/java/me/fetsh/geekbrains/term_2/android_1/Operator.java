@@ -1,12 +1,14 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.function.BiFunction;
 
 public enum Operator {
-    PLUS("+", "+", Double::sum),
-    MINUS("−", "-", (a, b) -> a - b),
-    DIVIDE("÷", "/", (a, b) -> a / b),
-    MULTIPLY("×", "*", (a, b) -> a * b);
+    PLUS("+", "+", (a, b) -> BigDecimal.valueOf(a).add(BigDecimal.valueOf(b), MathContext.DECIMAL64).doubleValue()),
+    MINUS("−", "-", (a, b) -> BigDecimal.valueOf(a).subtract(BigDecimal.valueOf(b), MathContext.DECIMAL64).doubleValue()),
+    DIVIDE("÷", "/", (a, b) -> BigDecimal.valueOf(a).divide(BigDecimal.valueOf(b), MathContext.DECIMAL64).doubleValue()),
+    MULTIPLY("×", "*", (a, b) -> BigDecimal.valueOf(a).multiply(BigDecimal.valueOf(b), MathContext.DECIMAL64).doubleValue());
 
     private final String visibleSign;
     private final String realSign;

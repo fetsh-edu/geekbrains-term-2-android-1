@@ -1,5 +1,6 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -9,11 +10,12 @@ import java.util.stream.Collectors;
 
 public class RPNExpression {
 
-    private final Map<String, Integer> precedence = Map.of(
-            "/", 4,
-            "*", 4,
-            "+", 2,
-            "-", 2);
+    private final Map<String, Integer> precedence = new HashMap<String, Integer>() {{
+        put("/", 4);
+        put("*", 4);
+        put("+", 2);
+        put("-", 2);
+    }};
 
     public Evaluation evaluate(InfixExpression infixExpression) {
         if(infixExpression.isEmpty()) return Evaluation.notReady;

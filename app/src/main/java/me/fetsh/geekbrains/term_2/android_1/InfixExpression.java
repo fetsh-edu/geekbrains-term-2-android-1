@@ -33,7 +33,7 @@ public class InfixExpression {
         replaceLast(lastToken().appendDot());
     }
 
-    public void addDigit(String digit) {
+    public void addDigit(Token.NumberToken digit) {
         lastToken()
                 .appendDigit(digit, secondLastToken())
                 .ifIsModificationOfOrElse(lastToken(), this::replaceLast, this::add);

@@ -16,18 +16,17 @@ public interface Token {
     static Token of(String value) {
         value = value.replace(",", "");
         try{
-            Double.valueOf(value);
             return NumberToken.of(value);
-        } catch(NumberFormatException e){
-           if (value.isEmpty()) {
-               return emptyToken;
-           } else {
+        } catch(NumberFormatException numberE){
+           try {
                return OperatorToken.of(value);
+           } catch (OperatorFormatException operatorE) {
+               return emptyToken;
            }
         }
     }
 
-    Token appendDigit(String digit, Token secondLastToken);
+    Token appendDigit(NumberToken digit, Token secondLastToken);
 
     Token appendDot();
 
@@ -129,8 +128,17 @@ public interface Token {
 
     class OperatorToken extends ValueToken implements Token {
 
-        public static Token of(String value) {
-            if (value.equals(Operator.MINUS.getRealSign())) {
+        /**
+         *
+         * @param      value   the string to be parsed.
+         * @return     a {@code OperatorToken} object holding the value
+         *             represented by the {@code String} argument.
+         * @throws     OperatorFormatException  if the string does not contain a
+         *             parsable operator.
+         */
+        public static Token of(String value) throws OperatorFormatException {
+            Operator operator = Operator.ofSign(value);
+            if (operator.equals(Operator.MINUS)) {
                 return new MinusOperatorToken();
             } else {
                 return new NotMinusOperatorToken(value);
@@ -142,8 +150,8 @@ public interface Token {
         }
 
         @Override
-        public Token appendDigit(String digit, Token secondLastToken) {
-            return NumberToken.of(digit);
+        public Token appendDigit(NumberToken digit, Token secondLastToken) {
+            return digit;
         }
 
         @Override
@@ -179,11 +187,11 @@ public interface Token {
         }
 
         @Override
-        public Token appendDigit(String digit, Token prevToken) {
+        public Token appendDigit(NumberToken digit, Token prevToken) {
             if (prevToken instanceof NotMinusOperatorToken || prevToken instanceof EmptyToken) {
-                return NumberToken.of(getValue() + digit);
+                return NumberToken.of(getValue() + digit.getValue());
             } else {
-                return NumberToken.of(digit);
+                return digit;
             }
         }
 
@@ -204,7 +212,16 @@ public interface Token {
             super(value);
         }
 
-        public static Token of(String value) {
+        /**
+         *
+         * @param      value   the string to be parsed.
+         * @return     a {@code NumberToken} object holding the value
+         *             represented by the {@code String} argument.
+         * @throws     NumberFormatException  if the string does not contain a
+         *             parsable number.
+         */
+        public static Token of(String value) throws NumberFormatException {
+            Double.valueOf(value);
             if (value.contains("E")) {
                 return new EngineeringToken(value);
             } else if (value.contains(".")) {
@@ -243,8 +260,8 @@ public interface Token {
         }
 
         @Override
-        public Token appendDigit(String digit, Token secondLastToken) {
-            return NumberToken.of(digit);
+        public Token appendDigit(NumberToken digit, Token secondLastToken) {
+            return digit;
         }
 
         @Override
@@ -260,8 +277,8 @@ public interface Token {
         }
 
         @Override
-        public Token appendDigit(String digit, Token secondLastToken) {
-            return NumberToken.of(getValue() + digit);
+        public Token appendDigit(NumberToken digit, Token secondLastToken) {
+            return NumberToken.of(getValue() + digit.getValue());
         }
 
         @Override
@@ -277,8 +294,8 @@ public interface Token {
         }
 
         @Override
-        public Token appendDigit(String digit, Token secondLastToken) {
-            return NumberToken.of(getValue() + digit);
+        public Token appendDigit(NumberToken digit, Token secondLastToken) {
+            return NumberToken.of(getValue() + digit.getValue());
         }
 
         @Override
@@ -294,15 +311,15 @@ public interface Token {
         }
 
         @Override
-        public Token appendDigit(String digit, Token secondLastToken) {
-            return NumberToken.of(digit);
+        public Token appendDigit(NumberToken digit, Token secondLastToken) {
+            return digit;
         }
     }
 
     class EmptyToken implements Token {
         @Override
-        public Token appendDigit(String digit, Token secondLastToken) {
-            return NumberToken.of(digit);
+        public Token appendDigit(NumberToken digit, Token secondLastToken) {
+            return digit;
         }
 
         @Override

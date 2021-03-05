@@ -41,7 +41,7 @@ public enum Operator {
                 result = Operator.MULTIPLY;
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw OperatorFormatException.forInputString(sign);
         }
         return result;
     }
@@ -54,3 +54,4 @@ public enum Operator {
         return realSign;
     }
 }
+

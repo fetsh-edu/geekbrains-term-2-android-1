@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements CalculatorActivit
                 R.id.keyboard_num1, R.id.keyboard_num2, R.id.keyboard_num3,
                 R.id.keyboard_num4, R.id.keyboard_num5, R.id.keyboard_num6,
                 R.id.keyboard_num7, R.id.keyboard_num8, R.id.keyboard_num9)) {
-            findViewById(number).setOnClickListener(v -> calc.handleNumber(number));
+            findViewById(number).setOnClickListener(v -> calc.handleDigit(((Button) v).getText().toString()));
         }
 
         findViewById(R.id.keyboard_num_dot).setOnClickListener(v -> calc.handleDot());

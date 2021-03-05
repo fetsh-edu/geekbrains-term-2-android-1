@@ -36,7 +36,7 @@ public class Calculator {
         updateDisplay();
     }
 
-    private void addDigit(String number) {
+    private void addDigit(Token.NumberToken number) {
         infixExpression.addDigit(number);
         setState(State.Input);
         updateDisplay();
@@ -73,38 +73,14 @@ public class Calculator {
         updateDisplay(result);
     }
 
-    public void handleNumber(int number) {
-        switch (number) {
-            case (R.id.keyboard_num0):
-                addDigit("0");
-                break;
-            case (R.id.keyboard_num1):
-                addDigit("1");
-                break;
-            case(R.id.keyboard_num2):
-                addDigit("2");
-                break;
-            case(R.id.keyboard_num3):
-                addDigit("3");
-                break;
-            case(R.id.keyboard_num4):
-                addDigit("4");
-                break;
-            case(R.id.keyboard_num5):
-                addDigit("5");
-                break;
-            case(R.id.keyboard_num6):
-                addDigit("6");
-                break;
-            case(R.id.keyboard_num7):
-                addDigit("7");
-                break;
-            case(R.id.keyboard_num8):
-                addDigit("8");
-                break;
-            case(R.id.keyboard_num9):
-                addDigit("9");
-                break;
+    public void handleDigit(String digit) {
+        if (digit.length() > 1 || !Character.isDigit(digit.charAt(0))) return;
+
+        try {
+            Token numberToken = Token.NumberToken.of(digit);
+            addDigit((Token.NumberToken) numberToken);
+        } catch (NumberFormatException e) {
+            // Ignore
         }
     }
 
@@ -142,7 +118,7 @@ public class Calculator {
         }
     }
 
-    public void updateDisplay() {
+    private void updateDisplay() {
         updateDisplay(rpnExpression.evaluate(infixExpression));
     }
 

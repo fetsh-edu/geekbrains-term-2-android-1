@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="button_width">0dp</dimen>
+    <dimen name="button_height">0dp</dimen>
+    <dimen name="display_width">0dp</dimen>
+    <dimen name="display_margin">10dp</dimen>
+
+    <dimen name="formula_textSize">36sp</dimen>
+    <dimen name="result_textSize">30sp</dimen>
+    <dimen name="button_textSize">25sp</dimen>
+    <dimen name="button_margin">0dp</dimen>
+</resources>

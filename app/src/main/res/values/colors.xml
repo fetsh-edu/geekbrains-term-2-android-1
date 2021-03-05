@@ -3,5 +3,13 @@
     <color name="colorPrimary">#26a69a</color>
     <color name="colorPrimaryDark">#00766c</color>
     <color name="colorAccent">#64d8cb</color>
-    <color name="displayBackground">#F5F5F6</color>
+    <color name="colorOnPrimary">#FFF</color>
+
+    <color name="colorShadowStart">#E6E6E6</color>
+    <color name="displayBackground">#F5F5F5</color>
+    <color name="colorLightAccent">#E1E2E1</color>
+    <color name="colorOnLightAccent">@color/colorPrimary</color>
+    <color name="colorBackground">#FFF</color>
+    <color name="colorOnBackground">#000</color>
+    <color name="colorOnBackgroundMuted">#757575</color>
 </resources>

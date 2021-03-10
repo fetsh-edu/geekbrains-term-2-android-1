@@ -9,4 +9,7 @@
     <dimen name="result_textSize">30sp</dimen>
     <dimen name="button_textSize">25sp</dimen>
     <dimen name="button_margin">0dp</dimen>
+    <dimen name="card_corner_radius">1dp</dimen>
+    <dimen name="card_elevation">5dp</dimen>
+    <dimen name="card_spacing">10dp</dimen>
 </resources>

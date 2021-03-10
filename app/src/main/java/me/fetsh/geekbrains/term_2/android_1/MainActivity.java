@@ -1,9 +1,12 @@
 package me.fetsh.geekbrains.term_2.android_1;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity implements CalculatorActivity {
+public class MainActivity extends AppActivity implements CalculatorActivity {
 
     private final static String savedExpressionKey = "expressionList";
     private final static String savedCalcState = "calcState";
@@ -24,6 +27,9 @@ public class MainActivity extends AppCompatActivity implements CalculatorActivit
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        applySavedTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+
         setContentView(R.layout.activity_main);
 
         calc = new Calculator(this);
@@ -51,6 +57,22 @@ public class MainActivity extends AppCompatActivity implements CalculatorActivit
         delete_button.setOnClickListener(v -> calc.handleDelete());
         delete_button.setOnLongClickListener(v -> calc.handleClear());
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            Intent runSettings = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(runSettings);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

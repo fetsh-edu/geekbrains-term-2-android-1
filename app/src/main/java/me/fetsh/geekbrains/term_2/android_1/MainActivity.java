@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppActivity implements CalculatorActivity {
@@ -37,13 +39,19 @@ public class MainActivity extends AppActivity implements CalculatorActivity {
         mFormulaTextView = (TextView) findViewById(R.id.formula);
         mResultTextView = (TextView) findViewById(R.id.result);
 
-        // Calculate received expression with space as delimiter
+        // Calculate received expression (as proof of concept, expression validation requires)
         // See https://github.com/fetsh-edu/temp_calculator
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle != null){
             String text  = bundle.getString(receivedExpression);
-            calc.restore(Arrays.asList(text.split("\\s+")), Calculator.State.Input.name());
+            String regex = "(?<=op)|(?=op)".replace("op", "[-+*/()]");
+            List<String> exp = Pattern.compile(regex)
+                    .splitAsStream(text)
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+            calc.restore(exp, Calculator.State.Input.name());
         }
 
         findViewById(R.id.keyboard_plus).setOnClickListener(v -> calc.handleOperator(Operator.PLUS));

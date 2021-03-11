@@ -38,6 +38,7 @@ public class MainActivity extends AppActivity implements CalculatorActivity {
         mResultTextView = (TextView) findViewById(R.id.result);
 
         // Calculate received expression with space as delimiter
+        // See https://github.com/fetsh-edu/temp_calculator
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle != null){

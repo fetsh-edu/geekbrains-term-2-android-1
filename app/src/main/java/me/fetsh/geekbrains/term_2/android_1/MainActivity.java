@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppActivity implements CalculatorActivity {
 
+    private final static String receivedExpression = "calcEXP";
     private final static String savedExpressionKey = "expressionList";
     private final static String savedCalcState = "calcState";
 
@@ -31,11 +32,18 @@ public class MainActivity extends AppActivity implements CalculatorActivity {
         applySavedTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 
         setContentView(R.layout.activity_main);
-
         calc = new Calculator(this);
 
         mFormulaTextView = (TextView) findViewById(R.id.formula);
         mResultTextView = (TextView) findViewById(R.id.result);
+
+        // Calculate received expression with space as delimiter
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null){
+            String text  = bundle.getString(receivedExpression);
+            calc.restore(Arrays.asList(text.split("\\s+")), Calculator.State.Input.name());
+        }
 
         findViewById(R.id.keyboard_plus).setOnClickListener(v -> calc.handleOperator(Operator.PLUS));
         findViewById(R.id.keyboard_minus).setOnClickListener(v -> calc.handleOperator(Operator.MINUS));

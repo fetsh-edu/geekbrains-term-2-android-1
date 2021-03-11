@@ -39,7 +39,7 @@ public class MainActivity extends AppActivity implements CalculatorActivity {
         mFormulaTextView = (TextView) findViewById(R.id.formula);
         mResultTextView = (TextView) findViewById(R.id.result);
 
-        // Calculate received expression (as proof of concept, expression validation requires)
+        // Calculate received expression (as proof of concept, expression validation required)
         // See https://github.com/fetsh-edu/temp_calculator
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();

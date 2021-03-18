@@ -50,5 +50,27 @@
         <item name="backgroundTint">@color/colorPrimary</item>
     </style>
 
+    <style name="settings_card">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+    </style>
+
+    <style name="settings_card_header" parent="settings_card">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+    <style name="settings_card_item">
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="settings_card_item_header">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="settings_card_item_content">
+        <item name="android:textSize">12sp</item>
+    </style>
+
 
 </resources>
